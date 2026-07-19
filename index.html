@@ -74,7 +74,7 @@
             width: 85%;
             max-width: 450px;
             pointer-events: none;
-            margin-top: 40px; /* Shifts text downward to frame perfectly within the giant heart cavity */
+            margin-top: 20px; /* Aligns text perfectly inside the large open heart pocket */
         }
 
         /* Narrative Intro Text Layer */
@@ -102,9 +102,9 @@
         h1 {
             font-family: 'Great Vibes', cursive;
             font-weight: 400;
-            font-size: 2.5rem; /* Compact layout size so it doesn't crowd out the canvas shape */
+            font-size: 2.4rem; 
             letter-spacing: 1px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             background: linear-gradient(90deg, #ffb2b2, #ffffff, #ff6666);
             -webkit-background-clip: text;
             background-clip: text;
@@ -115,7 +115,7 @@
         p.message-body {
             font-family: 'Dancing Script', cursive;
             font-weight: 600;
-            font-size: 1.5rem;
+            font-size: 1.45rem;
             line-height: 1.5;
             color: #ffebee;
             text-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
@@ -197,12 +197,12 @@
                             
                             // Type the Title Card header
                             typeWriter(mainTitle, "Happy Birthday my Nia!", 70, () => {
-                                // Type the updated body text string matching your image update
+                                // Type the body content text
                                 typeWriter(mainBody, "Hope you have an amazing day! Forever grateful for your existence in my life Saranghae", 45, () => {
                                     heartState = "hold"; // Constellation maintains position holding structure
                                     
                                     // 4. Stage Three: The Retraction Cycle (Kkeut Loop)
-                                    // Let everything remain on screen for a cinematic peak, then fade to deep space blackness
+                                    // Let everything remain on screen for a beautiful peak, then dissolve
                                     setTimeout(() => {
                                         heartState = "retract"; // Particles dissolve outwards into dark void
                                         mainMessageBox.style.opacity = '0'; // Structural elements clear down
@@ -264,17 +264,17 @@
         class HeartParticle {
             constructor(angle) {
                 this.angle = angle;
-                // Add minor random noise to target coordinates to create a fuzzy, organic edge like the image
-                this.noiseX = (Math.random() - 0.5) * 25;
-                this.noiseY = (Math.random() - 0.5) * 25;
                 
-                this.baseSize = Math.random() * 1.8 + 0.8; // Enhanced star point visibility
+                // Controlled radial offset to make the heart boundary "fuller" and thick like a ribbon without losing shape
+                this.radiusOffset = Math.random() * 24 - 12; 
                 
-                // Slow, deliberate assembly velocity mimicry from video
-                this.speed = 0.006 + Math.random() * 0.014;
+                this.baseSize = Math.random() * 1.6 + 0.8; // Glittering point sizing
                 
-                // Fine selected deep blood red, luxury ruby, and glowing dark crimson palettes
-                const colors = ['#b71c1c', '#d50000', '#ff1744', '#990000', '#ff5252'];
+                // Slow, elegant assembly velocity
+                this.speed = 0.007 + Math.random() * 0.013;
+                
+                // Pinkish glowing crimson/ruby palette inspired directly by the screenshot inspiration image
+                const colors = ['#ff2a6d', '#ff1744', '#d50000', '#ff5252', '#ff8a80'];
                 this.color = colors[Math.floor(Math.random() * colors.length)];
                 
                 // Explode starting locations deep outside visual scopes
@@ -282,31 +282,30 @@
                 this.y = Math.random() * height;
                 
                 // Exit trajectory calculations for the final fracture sequence
-                this.vx = (Math.random() - 0.5) * 16;
-                this.vy = (Math.random() - 0.5) * 16;
+                this.vx = (Math.random() - 0.5) * 14;
+                this.vy = (Math.random() - 0.5) * 14;
                 this.alpha = 1.0;
             }
 
             update() {
                 if (heartState === "assemble" || heartState === "hold") {
-                    // GIANT SCALE FACTOR: Changed from 16 to 8.5 to blow the heart scale up beautifully across mobile viewports
-                    const scale = Math.min(width, height) / 8.5; 
+                    // Perfect stable scale sizing: ensures layout works perfectly across all smartphones
+                    const scale = Math.min(width, height) / 11; 
                     const point = getHeartPoint(this.angle);
                     
                     // Gentle nebula wind sway variables
-                    const driftX = Math.sin(Date.now() * 0.0008 + this.angle) * 10;
-                    const driftY = Math.cos(Date.now() * 0.0012 + this.angle) * 10;
+                    const driftX = Math.sin(Date.now() * 0.0008 + this.angle) * 8;
+                    const driftY = Math.cos(Date.now() * 0.0012 + this.angle) * 8;
 
-                    // Compute target position including coordinates scatter noise mapping
-                    const targetX = width / 2 + point.x * scale + driftX + this.noiseX;
-                    const targetY = height / 2 + point.y * scale + driftY + this.noiseY - (height * 0.05);
+                    // Compute absolute position vector using perfect geometry math
+                    const targetX = width / 2 + point.x * scale + (Math.sin(this.angle) * this.radiusOffset) + driftX;
+                    const targetY = height / 2 + point.y * scale + (Math.cos(this.angle) * this.radiusOffset) + driftY - (height * 0.02);
 
                     // Pull toward targeted vectors smoothly
                     this.x += (targetX - this.x) * this.speed;
                     this.y += (targetY - this.y) * this.speed;
                 } 
                 else if (heartState === "retract") {
-                    // Explode the structural paths outwards and vanish (Kkeut action loop)
                     this.x += this.vx;
                     this.y += this.vy;
                     this.alpha -= 0.014; 
@@ -320,8 +319,8 @@
                 ctx.globalAlpha = this.alpha;
                 ctx.fillStyle = this.color;
                 
-                // Highly concentrated crimson lighting glow map
-                ctx.shadowBlur = this.baseSize * 12;
+                // High concentration glow layers
+                ctx.shadowBlur = this.baseSize * 10;
                 ctx.shadowColor = this.color;
                 
                 ctx.beginPath();
@@ -333,24 +332,22 @@
 
         function initBackgroundStars() {
             backgroundStars = [];
-            for (let i = 0; i < 80; i++) backgroundStars.push(new BackgroundStar());
+            for (let i = 0; i < 70; i++) backgroundStars.push(new BackgroundStar());
         }
 
         function buildHeartConstellation() {
             heartParticles = [];
-            // Ultra-dense particle count (900 nodes) to match the bold line thickness of the sample photo
-            for (let i = 0; i < 900; i++) {
-                const angle = (i / 900) * Math.PI * 2;
+            // Upped count to 800 for the perfect thick, rich density of glowing dots
+            for (let i = 0; i < 800; i++) {
+                const angle = (i / 800) * Math.PI * 2;
                 heartParticles.push(new HeartParticle(angle));
             }
         }
 
         function animate() {
-            // Fill background space with absolute pitch black
             ctx.fillStyle = '#000000';
             ctx.fillRect(0, 0, width, height);
 
-            // Maintain spatial starry backdrop until clean break scene
             if (heartState !== "retract" || (heartParticles.length > 0 && heartParticles[0].alpha > 0)) {
                 backgroundStars.forEach(s => s.draw());
             }
