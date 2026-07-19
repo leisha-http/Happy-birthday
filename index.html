@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday! 🌟</title>
+    <title>A Cosmic Wish | Happy Birthday! ✨</title>
     <style>
         * {
             margin: 0;
@@ -14,10 +14,15 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #050505;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #010103;
+            color: white;
+            font-family: 'Segoe UI', 'Avenir Next', Avenir, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        canvas {
+        
+        canvas#galaxyCanvas {
             position: absolute;
             top: 0;
             left: 0;
@@ -25,142 +30,200 @@
             height: 100%;
             z-index: 1;
         }
+
+        /* Ambient music control wrapper */
+        .interaction-gate {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .start-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 40px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+        }
+
+        .start-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 25px rgba(200, 200, 255, 0.4);
+            transform: scale(1.03);
+        }
+
         .overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: relative;
             z-index: 2;
             text-align: center;
-            pointer-events: none; /* Lets clicks go through to the animation if needed */
+            width: 90%;
+            max-width: 600px;
+            pointer-events: none;
+            display: none; /* Hidden until clicked */
+            opacity: 0;
+            transition: opacity 2.5s ease;
         }
+
         h1 {
-            color: #ffffff;
-            font-size: 3.5rem;
-            font-weight: 700;
-            text-shadow: 0 0 20px rgba(255, 107, 107, 0.8), 0 0 40px rgba(255, 107, 107, 0.4);
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-            animation: pulse 2s infinite ease-in-out;
+            font-weight: 300;
+            font-size: 2.5rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            background: linear-gradient(90deg, #ccd, #fff, #99c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(200, 200, 255, 0.4);
         }
-        p {
-            color: #ffb3b3;
-            font-size: 1.2rem;
-            text-shadow: 0 0 10px rgba(255, 179, 179, 0.5);
-            max-width: 320px;
+
+        p#sub-message {
+            font-weight: 400;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: #d1d5db;
             margin: 0 auto;
-            line-height: 1.5;
+            max-width: 480px;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
         }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); text-shadow: 0 0 20px rgba(255, 107, 107, 0.8); }
-            50% { transform: scale(1.05); text-shadow: 0 0 35px rgba(255, 107, 107, 1.2); }
+
+        @media (min-width: 768px) {
+            h1 { font-size: 3.2rem; }
+            p#sub-message { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
 
-    <canvas id="heartCanvas"></canvas>
+    <!-- 🎵 AUDIO ELEMENT: Replace 'your-audio-file.mp3' with your actual audio filename or link -->
+    <audio id="birthdayTrack" preload="auto">
+        <source src="your-audio-file.mp3" type="audio/mpeg">
+    </audio>
 
-    <div class="overlay">
-        <h1>Happy Birthday! My Nia</h1>
-        <!-- 📝 CHANGING THIS TEXT UPDATES THE CENTER MESSAGE NEXT YEAR -->
-        <p id="sub-message">I Hope you have an absolutely amazing day! saranghae 🩷✨</p>
+    <canvas id="galaxyCanvas"></canvas>
+
+    <!-- The entry screen that unblocks the audio browser rule -->
+    <div class="interaction-gate" id="gate">
+        <button class="start-btn" onclick="revealWish()">Tap to Unveil the Wish</button>
+    </div>
+
+    <div class="overlay" id="messageContainer">
+        <h1>A Wish Upon a Star</h1>
+        <p id="sub-message">Happy Birthday, My Nia! Hope your day is filled with magic, light, and everything you wished for, as expansive and beautiful as the cosmos itself. ✨</p>
     </div>
 
     <script>
-        const canvas = document.getElementById('heartCanvas');
-        const ctx = canvas.getContext('2d');
+        const audio = document.getElementById('birthdayTrack');
+        const gate = document.getElementById('gate');
+        const container = document.getElementById('messageContainer');
 
-        let width = canvas.width = window.innerWidth;
-        let height = canvas.height = window.innerHeight;
+        function revealWish() {
+            // Hide the button smoothly
+            gate.style.opacity = '0';
+            gate.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+                gate.style.display = 'none';
+                
+                // Show and fade in the text message
+                container.style.display = 'block';
+                setTimeout(() => { container.style.opacity = '1'; }, 50);
+                
+                // Start music at exactly 35 seconds
+                audio.currentTime = 35;
+                audio.volume = 0.8;
+                audio.play();
 
-        window.addEventListener('resize', () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        });
+                // Loop or stop after 8 seconds (0:35 to 0:43)
+                const playDuration = 8000; // 8 seconds in milliseconds
+                setTimeout(() => {
+                    // Smooth fade out effect at 43 seconds
+                    let fadeOutInterval = setInterval(() => {
+                        if (audio.volume > 0.05) {
+                            audio.volume -= 0.05;
+                        } else {
+                            audio.clearInterval(fadeOutInterval);
+                            audio.pause();
+                        }
+                    }, 50);
+                }, playDuration);
 
-        // Mathematical formula for the heart shape coordinates
-        function heartPosition(t) {
-            return {
-                x: 16 * Math.pow(Math.sin(t), 3),
-                y: -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t))
-            };
+            }, 500);
         }
 
-        class TextParticle {
+        // --- GALAXY ANIMATION ENGINE ---
+        const canvas = document.getElementById('galaxyCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, stars = [], nebulaGradient;
+        const starCount = 350;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            nebulaGradient = ctx.createRadialGradient(width * 0.4, height * 0.3, 0, width / 2, height / 2, Math.max(width, height));
+            nebulaGradient.addColorStop(0, '#100a25');
+            nebulaGradient.addColorStop(0.3, '#030514');
+            nebulaGradient.addColorStop(0.7, '#010103');
+            nebulaGradient.addColorStop(1, '#000000');
+            initStars();
+        }
+
+        class Star {
             constructor() {
-                this.t = Math.random() * Math.PI * 2;
-                const pos = heartPosition(this.t);
-                
-                // Scale dynamic size of the heart based on screen width
-                const scale = Math.min(width, height) / 30; 
-                this.targetX = width / 2 + pos.x * scale;
-                this.targetY = height / 2 + pos.y * scale;
-                
-                // Start scattered across the screen
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                
-                this.speed = 0.03 + Math.random() * 0.04;
-                this.fontSize = Math.floor(Math.random() * 8) + 8;
-                this.text = "Happy Birthday";
-                this.opacity = Math.random() * 0.5 + 0.5;
-                
-                // Variations of neon reds/pinks like the video
-                const hues = [350, 355, 0, 10];
-                this.color = hues[Math.floor(Math.random() * hues.length)];
+                this.baseOpacity = Math.random() * 0.5 + 0.3;
+                this.twinkleFactor = Math.random() * 0.05 + 0.02;
+                this.z = Math.random() * 0.9 + 0.1;
+                this.size = Math.max(0.5, this.z * 1.5 + (Math.random() > 0.95 ? 1 : 0));
+                this.speed = Math.random() * 0.04 + 0.01;
+                const hue = Math.random() > 0.8 ? 210 : 0;
+                this.color = `hsla(${hue}, 80%, 90%,`;
             }
-
             update() {
-                // Subtle pulse rhythm over time
-                const time = Date.now() * 0.003;
-                const pulseScale = 1 + Math.sin(time + this.t * 5) * 0.05;
-
-                const pos = heartPosition(this.t);
-                const scale = (Math.min(width, height) / 30) * pulseScale;
-                
-                this.targetX = width / 2 + pos.x * scale;
-                this.targetY = height / 2 + pos.y * scale;
-
-                // Move toward target position (easing effect)
-                this.x += (this.targetX - this.x) * this.speed;
-                this.y += (this.targetY - this.y) * this.speed;
+                this.x += (Math.random() - 0.5) * this.speed;
+                this.y += (Math.random() - 0.5) * this.speed;
+                if (this.x > width) this.x = 0; if (this.x < 0) this.x = width;
+                if (this.y > height) this.y = 0; if (this.y < 0) this.y = height;
             }
-
             draw() {
+                const opacity = this.baseOpacity + Math.sin(Date.now() * this.twinkleFactor) * 0.2;
                 ctx.save();
-                ctx.font = `${this.fontSize}px sans-serif`;
-                ctx.fillStyle = `hsla(${this.color}, 100%, 65%, ${this.opacity})`;
-                ctx.shadowBlur = 12;
-                ctx.shadowColor = `hsl(${this.color}, 100%, 50%)`;
-                ctx.translate(this.x, this.y);
-                // Tilt the text slightly along the curve of the heart
-                ctx.rotate(this.t - Math.PI / 2 * (this.x > width / 2 ? 1 : -1) * 0.2);
-                ctx.fillText(this.text, 0, 0);
+                ctx.fillStyle = this.color + Math.max(0, opacity) + ')';
+                ctx.shadowBlur = this.size * 5;
+                ctx.shadowColor = `rgba(180, 220, 255, 0.6)`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
                 ctx.restore();
             }
         }
 
-        // Generate hundreds of text elements to shape the heart
-        const particles = [];
-        const totalParticles = 350; 
-        for (let i = 0; i < totalParticles; i++) {
-            particles.push(new TextParticle());
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < starCount; i++) stars.push(new Star());
         }
 
         function animate() {
-            // Leave a slight trail behind for a smooth glow movement
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.2)';
+            ctx.fillStyle = nebulaGradient;
             ctx.fillRect(0, 0, width, height);
-
-            particles.forEach(p => {
-                p.update();
-                p.draw();
+            stars.forEach(star => {
+                star.update();
+                star.draw();
             });
-
             requestAnimationFrame(animate);
         }
 
+        window.addEventListener('resize', resize);
+        resize();
         animate();
     </script>
 </body>
