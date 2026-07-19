@@ -44,40 +44,43 @@
         }
 
         .start-btn {
-            background: transparent;
+            background: transparent !important;
+            -webkit-appearance: none;
+            appearance: none;
             color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 18px 36px;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            padding: 16px 32px;
             font-family: 'Segoe UI', sans-serif;
-            font-size: 1rem;
+            font-size: 0.9rem;
             letter-spacing: 3px;
             text-transform: uppercase;
             border-radius: 40px;
             cursor: pointer;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.9);
+            outline: none;
+            box-shadow: none;
             transition: all 0.4s ease;
         }
 
-        .start-btn:hover {
-            background: rgba(213, 0, 0, 0.1); /* Subtle blood-red flash on hover */
-            box-shadow: 0 0 30px rgba(213, 0, 0, 0.4);
-            border-color: rgba(255, 23, 68, 0.6);
-            transform: scale(1.02);
+        .start-btn:hover, .start-btn:active {
+            background: rgba(213, 0, 0, 0.1) !important;
+            box-shadow: 0 0 25px rgba(213, 0, 0, 0.4);
+            border-color: rgba(255, 23, 68, 0.6) !important;
         }
 
         .overlay {
             position: relative;
             z-index: 2;
             text-align: center;
-            width: 90%;
-            max-width: 600px;
+            width: 85%;
+            max-width: 450px;
             pointer-events: none;
+            margin-top: 40px; /* Shifts text downward to frame perfectly within the giant heart cavity */
         }
 
         /* Narrative Intro Text Layer */
         .intro-text {
             font-family: 'Dancing Script', cursive;
-            font-size: 2.2rem;
+            font-size: 2rem;
             color: #ff8a80;
             text-shadow: 0 0 15px rgba(213, 0, 0, 0.6);
             opacity: 0;
@@ -99,24 +102,23 @@
         h1 {
             font-family: 'Great Vibes', cursive;
             font-weight: 400;
-            font-size: 4.5rem; 
+            font-size: 2.5rem; /* Compact layout size so it doesn't crowd out the canvas shape */
             letter-spacing: 1px;
             margin-bottom: 20px;
             background: linear-gradient(90deg, #ffb2b2, #ffffff, #ff6666);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 25px rgba(255, 23, 68, 0.4);
+            text-shadow: 0 0 20px rgba(255, 23, 68, 0.4);
         }
 
         p.message-body {
             font-family: 'Dancing Script', cursive;
             font-weight: 600;
-            font-size: 2.2rem;
+            font-size: 1.5rem;
             line-height: 1.5;
             color: #ffebee;
             text-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
-            min-height: 3.5rem; /* Prevents layout jumps while typing */
         }
     </style>
 </head>
@@ -195,8 +197,8 @@
                             
                             // Type the Title Card header
                             typeWriter(mainTitle, "Happy Birthday my Nia!", 70, () => {
-                                // Type the body content text
-                                typeWriter(mainBody, "Hope you have an amazing day! Forever grateful for your existence in my life Saranghae ♥", 50, () => {
+                                // Type the updated body text string matching your image update
+                                typeWriter(mainBody, "Hope you have an amazing day! Forever grateful for your existence in my life Saranghae", 45, () => {
                                     heartState = "hold"; // Constellation maintains position holding structure
                                     
                                     // 4. Stage Three: The Retraction Cycle (Kkeut Loop)
@@ -214,7 +216,7 @@
                                                 audio.pause();
                                             }
                                         }, 60);
-                                    }, 4000); // Keeps screen active for 4 beautiful seconds at peak composition
+                                    }, 5000); // Keeps screen active for 5 beautiful seconds at peak composition
                                 });
                             });
                         }, 1000);
@@ -262,10 +264,14 @@
         class HeartParticle {
             constructor(angle) {
                 this.angle = angle;
-                this.baseSize = Math.random() * 1.5 + 0.6;
+                // Add minor random noise to target coordinates to create a fuzzy, organic edge like the image
+                this.noiseX = (Math.random() - 0.5) * 25;
+                this.noiseY = (Math.random() - 0.5) * 25;
+                
+                this.baseSize = Math.random() * 1.8 + 0.8; // Enhanced star point visibility
                 
                 // Slow, deliberate assembly velocity mimicry from video
-                this.speed = 0.005 + Math.random() * 0.012;
+                this.speed = 0.006 + Math.random() * 0.014;
                 
                 // Fine selected deep blood red, luxury ruby, and glowing dark crimson palettes
                 const colors = ['#b71c1c', '#d50000', '#ff1744', '#990000', '#ff5252'];
@@ -276,22 +282,24 @@
                 this.y = Math.random() * height;
                 
                 // Exit trajectory calculations for the final fracture sequence
-                this.vx = (Math.random() - 0.5) * 15;
-                this.vy = (Math.random() - 0.5) * 15;
+                this.vx = (Math.random() - 0.5) * 16;
+                this.vy = (Math.random() - 0.5) * 16;
                 this.alpha = 1.0;
             }
 
             update() {
                 if (heartState === "assemble" || heartState === "hold") {
-                    const scale = Math.min(width, height) / 28;
+                    // GIANT SCALE FACTOR: Changed from 16 to 8.5 to blow the heart scale up beautifully across mobile viewports
+                    const scale = Math.min(width, height) / 8.5; 
                     const point = getHeartPoint(this.angle);
                     
                     // Gentle nebula wind sway variables
-                    const driftX = Math.sin(Date.now() * 0.0008 + this.angle) * 8;
-                    const driftY = Math.cos(Date.now() * 0.0012 + this.angle) * 8;
+                    const driftX = Math.sin(Date.now() * 0.0008 + this.angle) * 10;
+                    const driftY = Math.cos(Date.now() * 0.0012 + this.angle) * 10;
 
-                    const targetX = width / 2 + point.x * scale + driftX;
-                    const targetY = height / 2 + point.y * scale + driftY;
+                    // Compute target position including coordinates scatter noise mapping
+                    const targetX = width / 2 + point.x * scale + driftX + this.noiseX;
+                    const targetY = height / 2 + point.y * scale + driftY + this.noiseY - (height * 0.05);
 
                     // Pull toward targeted vectors smoothly
                     this.x += (targetX - this.x) * this.speed;
@@ -301,7 +309,7 @@
                     // Explode the structural paths outwards and vanish (Kkeut action loop)
                     this.x += this.vx;
                     this.y += this.vy;
-                    this.alpha -= 0.012; 
+                    this.alpha -= 0.014; 
                     if (this.alpha < 0) this.alpha = 0;
                 }
             }
@@ -313,7 +321,7 @@
                 ctx.fillStyle = this.color;
                 
                 // Highly concentrated crimson lighting glow map
-                ctx.shadowBlur = this.baseSize * 10;
+                ctx.shadowBlur = this.baseSize * 12;
                 ctx.shadowColor = this.color;
                 
                 ctx.beginPath();
@@ -325,13 +333,14 @@
 
         function initBackgroundStars() {
             backgroundStars = [];
-            for (let i = 0; i < 100; i++) backgroundStars.push(new BackgroundStar());
+            for (let i = 0; i < 80; i++) backgroundStars.push(new BackgroundStar());
         }
 
         function buildHeartConstellation() {
             heartParticles = [];
-            for (let i = 0; i < 550; i++) {
-                const angle = (i / 550) * Math.PI * 2;
+            // Ultra-dense particle count (900 nodes) to match the bold line thickness of the sample photo
+            for (let i = 0; i < 900; i++) {
+                const angle = (i / 900) * Math.PI * 2;
                 heartParticles.push(new HeartParticle(angle));
             }
         }
