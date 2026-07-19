@@ -62,27 +62,27 @@
         }
 
         .start-btn:hover, .start-btn:active {
-            background: rgba(213, 0, 0, 0.1) !important;
-            box-shadow: 0 0 25px rgba(213, 0, 0, 0.4);
-            border-color: rgba(255, 23, 68, 0.6) !important;
+            background: rgba(255, 105, 180, 0.1) !important;
+            box-shadow: 0 0 25px rgba(255, 20, 147, 0.4);
+            border-color: rgba(255, 105, 180, 0.6) !important;
         }
 
         .overlay {
-            position: absolute; /* Changed to absolute to prevent pushing the canvas layout boundaries */
+            position: absolute; /* absolute to prevent pushing layout boundaries */
             z-index: 2;
             text-align: center;
             width: 85%;
             max-width: 420px;
             pointer-events: none;
-            transform: translateY(15px); /* Perfectly aligns text within the newly contained heart cavity */
+            transform: translateY(15px); /* Aligns text inside the heart cavity */
         }
 
         /* Narrative Intro Text Layer */
         .intro-text {
             font-family: 'Dancing Script', cursive;
             font-size: 2rem;
-            color: #ff8a80;
-            text-shadow: 0 0 15px rgba(213, 0, 0, 0.6);
+            color: #ffb74d;
+            text-shadow: 0 0 15px rgba(255, 105, 180, 0.6);
             opacity: 0;
             transition: opacity 1s ease;
             position: absolute;
@@ -105,11 +105,11 @@
             font-size: 2.4rem; 
             letter-spacing: 1px;
             margin-bottom: 15px;
-            background: linear-gradient(90deg, #ffb2b2, #ffffff, #ff6666);
+            background: linear-gradient(90deg, #ffc0cb, #ffffff, #ff69b4);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255, 23, 68, 0.4);
+            text-shadow: 0 0 20px rgba(255, 20, 147, 0.4);
         }
 
         p.message-body {
@@ -117,7 +117,7 @@
             font-weight: 600;
             font-size: 1.45rem;
             line-height: 1.5;
-            color: #ffebee;
+            color: #fff0f5;
             text-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
         }
     </style>
@@ -151,9 +151,8 @@
         const mainTitle = document.getElementById('mainTitle');
         const mainBody = document.getElementById('mainBody');
         
-        let heartState = "off"; // State engine flags: "off", "assemble", "hold", "retract"
+        let heartState = "off"; // "off", "assemble", "hold", "retract"
 
-        // Typewriter core mechanics
         function typeWriter(element, text, speed, callback) {
             let i = 0;
             element.innerHTML = "";
@@ -170,43 +169,34 @@
         }
 
         function startCinematicVision() {
-            // 1. Hide the initial user gate interaction
             gate.style.opacity = '0';
             setTimeout(() => { gate.style.display = 'none'; }, 400);
 
-            // Audio track plays IMMEDIATELY to capture the intro build-up
             audio.currentTime = 24; 
             audio.volume = 0.8;
             audio.play();
 
-            // 2. Stage One: Render "From Leisha, to my Nia..." line
             setTimeout(() => {
                 introText.style.opacity = '1';
                 typeWriter(introText, "From Leisha, to my Nia...", 90, () => {
-                    // Let the intro text breathe briefly, then fade out
                     setTimeout(() => {
                         introText.style.opacity = '0';
                         
-                        // 3. Stage Two: Fire up particle canvas and type out birthday greetings
                         setTimeout(() => {
                             introText.style.display = 'none';
-                            heartState = "assemble"; // Crimson stars begin slow majestic configuration pull
+                            heartState = "assemble"; 
                             
                             mainMessageBox.style.display = 'block';
                             mainMessageBox.style.opacity = '1';
                             
-                            // Type the Title Card header
                             typeWriter(mainTitle, "Happy Birthday my Nia!", 70, () => {
-                                // Type the body content text
                                 typeWriter(mainBody, "Hope you have an amazing day! Forever grateful for your existence in my life Saranghae", 45, () => {
-                                    heartState = "hold"; // Constellation maintains position holding structure
+                                    heartState = "hold"; 
                                     
-                                    // 4. Stage Three: The Retraction Cycle (Kkeut Loop)
                                     setTimeout(() => {
-                                        heartState = "retract"; // Particles dissolve outwards into dark void
-                                        mainMessageBox.style.opacity = '0'; // Structural elements clear down
+                                        heartState = "retract"; 
+                                        mainMessageBox.style.opacity = '0'; 
                                         
-                                        // Fade audio track volume down dynamically to match visual exit
                                         let fadeOutInterval = setInterval(() => {
                                             if (audio.volume > 0.05) {
                                                 audio.volume -= 0.05;
@@ -215,7 +205,7 @@
                                                 audio.pause();
                                             }
                                         }, 60);
-                                    }, 5000); // Keeps screen active for 5 beautiful seconds at peak composition
+                                    }, 5000); 
                                 });
                             });
                         }, 1000);
@@ -264,16 +254,14 @@
             constructor(angle) {
                 this.angle = angle;
                 
-                // Controlled radial offset thickness band mirroring the inspiration image perfectly
+                // Controlled radial thickness band
                 this.radiusOffset = Math.random() * 20 - 10; 
-                
-                this.baseSize = Math.random() * 1.5 + 0.7; // Shimmering dot sizes
-                
-                // Smooth assembly speeds
+                this.baseSize = Math.random() * 1.5 + 0.7; 
                 this.speed = 0.007 + Math.random() * 0.013;
                 
-                // Pinkish glowing crimson/ruby palette inspired directly by the screenshot inspiration image
-                const colors = ['#ff2a6d', '#ff1744', '#d50000', '#ff5252', '#ff8a80'];
+                // --- NEW COSMIC PINK SHADES ---
+                // Hot Pink, Deep Rose, Neon Pink, Light Pink, Magenta glow
+                const colors = ['#ff69b4', '#ff1493', '#ff66cc', '#f8bbd0', '#ff4081', '#ff80ab'];
                 this.color = colors[Math.floor(Math.random() * colors.length)];
                 
                 this.x = Math.random() * width;
@@ -286,15 +274,12 @@
 
             update() {
                 if (heartState === "assemble" || heartState === "hold") {
-                    // SAFE VIEWPORT SCALE BOUNDARY: Caps sizing to fit within the screen height limits perfectly 
                     const scale = Math.min(width / 28, height / 36); 
                     const point = getHeartPoint(this.angle);
                     
-                    // Gentle ambient drifting animation 
                     const driftX = Math.sin(Date.now() * 0.0008 + this.angle) * 6;
                     const driftY = Math.cos(Date.now() * 0.0012 + this.angle) * 6;
 
-                    // Compute absolute point destination vector centered inside the layout
                     const targetX = width / 2 + point.x * scale + (Math.sin(this.angle) * this.radiusOffset) + driftX;
                     const targetY = height / 2 + point.y * scale + (Math.cos(this.angle) * this.radiusOffset) + driftY;
 
@@ -332,7 +317,6 @@
 
         function buildHeartConstellation() {
             heartParticles = [];
-            // High particle concentration for a clean velvet look
             for (let i = 0; i < 800; i++) {
                 const angle = (i / 800) * Math.PI * 2;
                 heartParticles.push(new HeartParticle(angle));
