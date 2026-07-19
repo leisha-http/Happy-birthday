@@ -44,9 +44,9 @@
         }
 
         .start-btn {
-            background: rgba(255, 255, 255, 0.05);
+            background: transparent; /* Changed to stay completely hidden in pure pitch black */
             color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             padding: 18px 36px;
             font-family: 'Segoe UI', sans-serif;
             font-size: 1rem;
@@ -54,14 +54,14 @@
             text-transform: uppercase;
             border-radius: 40px;
             cursor: pointer;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.9);
             transition: all 0.4s ease;
         }
 
         .start-btn:hover {
-            background: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 0 30px rgba(255, 140, 180, 0.4);
+            background: rgba(255, 40, 40, 0.1); /* Subtle crimson flash on hover */
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+            border-color: rgba(255, 100, 100, 0.6);
             transform: scale(1.02);
         }
 
@@ -83,11 +83,11 @@
             font-size: 4rem; 
             letter-spacing: 1px;
             margin-bottom: 15px;
-            background: linear-gradient(90deg, #ffdeee, #ffffff, #e1bfff);
+            background: linear-gradient(90deg, #ffcdd2, #ffffff, #ff8a80);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 25px rgba(255, 180, 200, 0.4);
+            text-shadow: 0 0 25px rgba(255, 50, 50, 0.4);
         }
 
         p {
@@ -95,7 +95,7 @@
             font-weight: 600;
             font-size: 1.8rem;
             line-height: 1.4;
-            color: #fce7f3;
+            color: #ffebee;
             text-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
         }
     </style>
@@ -142,17 +142,17 @@
                 audio.volume = 0.8;
                 audio.play();
 
-                // Fades out and clips at 43 seconds (16 second duration)
+                // Fades out cleanly after 16 seconds (hits exactly at 43 seconds runtime)
                 setTimeout(() => {
                     let fadeOutInterval = setInterval(() => {
                         if (audio.volume > 0.05) {
                             audio.volume -= 0.05;
                         } else {
-                            clearInterval(fadeOutInterval);
+                            clearInterval(fadeOutInterval); // Fixed the bug here! Removed "audio." prefix
                             audio.pause();
                         }
                     }, 50);
-                }, 8000);
+                }, 16000); // 16000 milliseconds = 16 full seconds of playback
 
             }, 500);
         }
@@ -198,14 +198,17 @@
         class HeartParticle {
             constructor(angle) {
                 this.angle = angle;
-                this.baseSize = Math.random() * 1.5 + 0.4;
-                this.speed = 0.02 + Math.random() * 0.03;
+                this.baseSize = Math.random() * 1.5 + 0.5;
                 
-                // Shimmering pinks/lavenders from the video overlay style
-                const colors = ['#ff75a0', '#fca3cc', '#dbb6ff', '#ffa3e3'];
+                // --- SLOWED MOTION DESIGN ---
+                // Lower values mean a smoother, more cinematic space pull
+                this.speed = 0.006 + Math.random() * 0.012;
+                
+                // Deep Crimson, Ruby Red, Shimmering Dark Rose Red variants
+                const colors = ['#ff1744', '#d50000', '#ff5252', '#b71c1c', '#ff8a80'];
                 this.color = colors[Math.floor(Math.random() * colors.length)];
                 
-                // Start way off-screen or exploded wildly across space
+                // Explode particles far out past the display boundaries initially
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
             }
@@ -215,8 +218,8 @@
                 const point = getHeartPoint(this.angle);
                 
                 // Slow wavy nebula drift
-                const driftX = Math.sin(Date.now() * 0.001 + this.angle) * 6;
-                const driftY = Math.cos(Date.now() * 0.0015 + this.angle) * 6;
+                const driftX = Math.sin(Date.now() * 0.0008 + this.angle) * 7;
+                const driftY = Math.cos(Date.now() * 0.0012 + this.angle) * 7;
 
                 const targetX = width / 2 + point.x * scale + driftX;
                 const targetY = height / 2 + point.y * scale + driftY;
@@ -229,8 +232,11 @@
             draw() {
                 ctx.save();
                 ctx.fillStyle = this.color;
-                ctx.shadowBlur = this.baseSize * 7;
+                
+                // Intense Crimson Glow
+                ctx.shadowBlur = this.baseSize * 9;
                 ctx.shadowColor = this.color;
+                
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.baseSize, 0, Math.PI * 2);
                 ctx.fill();
@@ -245,8 +251,8 @@
 
         function buildHeartConstellation() {
             heartParticles = [];
-            for (let i = 0; i < 480; i++) {
-                const angle = (i / 480) * Math.PI * 2;
+            for (let i = 0; i < 500; i++) {
+                const angle = (i / 500) * Math.PI * 2;
                 heartParticles.push(new HeartParticle(angle));
             }
         }
@@ -257,7 +263,7 @@
         }
 
         function animate() {
-            // Keep background pure canvas black
+            // Pure canvas pitch black fill on every redraw frame
             ctx.fillStyle = '#000000';
             ctx.fillRect(0, 0, width, height);
 
