@@ -14,15 +14,15 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #010103;
+            background-color: #020205;
             color: white;
-            font-family: 'Segoe UI', 'Avenir Next', Avenir, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         
-        canvas#galaxyCanvas {
+        canvas {
             position: absolute;
             top: 0;
             left: 0;
@@ -31,7 +31,6 @@
             z-index: 1;
         }
 
-        /* Ambient music control wrapper */
         .interaction-gate {
             position: relative;
             z-index: 3;
@@ -40,7 +39,7 @@
         }
 
         .start-btn {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.07);
             color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 16px 32px;
@@ -49,14 +48,14 @@
             text-transform: uppercase;
             border-radius: 40px;
             cursor: pointer;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
             transition: all 0.4s ease;
         }
 
         .start-btn:hover {
             background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 25px rgba(200, 200, 255, 0.4);
+            box-shadow: 0 0 30px rgba(255, 150, 200, 0.5);
             transform: scale(1.03);
         }
 
@@ -65,59 +64,50 @@
             z-index: 2;
             text-align: center;
             width: 90%;
-            max-width: 600px;
+            max-width: 500px;
             pointer-events: none;
-            display: none; /* Hidden until clicked */
+            display: none;
             opacity: 0;
-            transition: opacity 2.5s ease;
+            transition: opacity 2s ease;
         }
 
         h1 {
             font-weight: 300;
-            font-size: 2.5rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            margin-bottom: 25px;
-            background: linear-gradient(90deg, #ccd, #fff, #99c);
+            font-size: 2.8rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #ffdeee, #ffffff, #e1bfff);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px rgba(200, 200, 255, 0.4);
+            text-shadow: 0 0 20px rgba(255, 192, 203, 0.3);
         }
 
-        p#sub-message {
+        p {
             font-weight: 400;
             font-size: 1.15rem;
             line-height: 1.7;
-            color: #d1d5db;
-            margin: 0 auto;
-            max-width: 480px;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
-        }
-
-        @media (min-width: 768px) {
-            h1 { font-size: 3.2rem; }
-            p#sub-message { font-size: 1.3rem; }
+            color: #e2e8f0;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
         }
     </style>
 </head>
 <body>
 
-    <!-- 🎵 AUDIO ELEMENT: Replace 'your-audio-file.mp3' with your actual audio filename or link -->
+    <!-- 🎵 AUDIO FILE: Change 'your-audio-file.mp3' to your music file name -->
     <audio id="birthdayTrack" preload="auto">
         <source src="audio-1784429183439.mp3" type="audio/mpeg">
     </audio>
 
-    <canvas id="galaxyCanvas"></canvas>
+    <canvas id="cosmicCanvas"></canvas>
 
-    <!-- The entry screen that unblocks the audio browser rule -->
     <div class="interaction-gate" id="gate">
         <button class="start-btn" onclick="revealWish()">Tap to Unveil the Wish</button>
     </div>
 
     <div class="overlay" id="messageContainer">
-        <h1>A Wish Upon a Star</h1>
-        <p id="sub-message">Happy Birthday, My Nia! Hope your day is filled with magic, light, and everything you wished for, as expansive and beautiful as the cosmos itself. ✨</p>
+        <h1>Happy Birthday my Nia!</h1>
+        <p id="sub-message">Hope you have an absolutely amazing day! Saranghae</p>
     </div>
 
     <script>
@@ -126,99 +116,143 @@
         const container = document.getElementById('messageContainer');
 
         function revealWish() {
-            // Hide the button smoothly
             gate.style.opacity = '0';
             gate.style.transform = 'scale(0.9)';
             
             setTimeout(() => {
                 gate.style.display = 'none';
-                
-                // Show and fade in the text message
                 container.style.display = 'block';
                 setTimeout(() => { container.style.opacity = '1'; }, 50);
                 
-                // Start music at exactly 35 seconds
+                // Play song at 35 seconds
                 audio.currentTime = 35;
                 audio.volume = 0.8;
                 audio.play();
 
-                // Loop or stop after 8 seconds (0:35 to 0:43)
-                const playDuration = 8000; // 8 seconds in milliseconds
+                // Stop and fade out after 8 seconds (at 43 seconds)
                 setTimeout(() => {
-                    // Smooth fade out effect at 43 seconds
                     let fadeOutInterval = setInterval(() => {
                         if (audio.volume > 0.05) {
                             audio.volume -= 0.05;
                         } else {
-                            audio.clearInterval(fadeOutInterval);
+                            clearInterval(fadeOutInterval);
                             audio.pause();
                         }
                     }, 50);
-                }, playDuration);
+                }, 8000);
 
             }, 500);
         }
 
-        // --- GALAXY ANIMATION ENGINE ---
-        const canvas = document.getElementById('galaxyCanvas');
+        // --- VISUALS ENGINE: GALAXY BACKDROP + INTERTWINED HEART PARTICLES ---
+        const canvas = document.getElementById('cosmicCanvas');
         const ctx = canvas.getContext('2d');
-        let width, height, stars = [], nebulaGradient;
-        const starCount = 350;
+        let width, height, backgroundStars = [], heartParticles = [], nebulaGradient;
 
         function resize() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
-            nebulaGradient = ctx.createRadialGradient(width * 0.4, height * 0.3, 0, width / 2, height / 2, Math.max(width, height));
-            nebulaGradient.addColorStop(0, '#100a25');
-            nebulaGradient.addColorStop(0.3, '#030514');
-            nebulaGradient.addColorStop(0.7, '#010103');
-            nebulaGradient.addColorStop(1, '#000000');
-            initStars();
+            
+            // Rich space background color gradient
+            nebulaGradient = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, Math.max(width, height));
+            nebulaGradient.addColorStop(0, '#110924'); 
+            nebulaGradient.addColorStop(0.4, '#040416');
+            nebulaGradient.addColorStop(1, '#010103');
+
+            initCosmos();
         }
 
-        class Star {
+        // Mathematical formula for a classic sleek heart path
+        function getHeartPoint(t) {
+            return {
+                x: 16 * Math.pow(Math.sin(t), 3),
+                y: -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t))
+            };
+        }
+
+        class BackgroundStar {
             constructor() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.baseOpacity = Math.random() * 0.5 + 0.3;
-                this.twinkleFactor = Math.random() * 0.05 + 0.02;
-                this.z = Math.random() * 0.9 + 0.1;
-                this.size = Math.max(0.5, this.z * 1.5 + (Math.random() > 0.95 ? 1 : 0));
-                this.speed = Math.random() * 0.04 + 0.01;
-                const hue = Math.random() > 0.8 ? 210 : 0;
-                this.color = `hsla(${hue}, 80%, 90%,`;
-            }
-            update() {
-                this.x += (Math.random() - 0.5) * this.speed;
-                this.y += (Math.random() - 0.5) * this.speed;
-                if (this.x > width) this.x = 0; if (this.x < 0) this.x = width;
-                if (this.y > height) this.y = 0; if (this.y < 0) this.y = height;
+                this.size = Math.random() * 1.2;
+                this.opacity = Math.random() * 0.6 + 0.2;
+                this.factor = Math.random() * 0.03 + 0.01;
             }
             draw() {
-                const opacity = this.baseOpacity + Math.sin(Date.now() * this.twinkleFactor) * 0.2;
-                ctx.save();
-                ctx.fillStyle = this.color + Math.max(0, opacity) + ')';
-                ctx.shadowBlur = this.size * 5;
-                ctx.shadowColor = `rgba(180, 220, 255, 0.6)`;
+                this.opacity += Math.sin(Date.now() * this.factor) * 0.01;
+                ctx.fillStyle = `rgba(220, 230, 255, ${Math.max(0.1, this.opacity)})`;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        class HeartParticle {
+            constructor(angle) {
+                this.angle = angle;
+                this.baseSize = Math.random() * 1.5 + 0.5;
+                this.speed = 0.02 + Math.random() * 0.03;
+                
+                // Cosmic dust colors: space pinks, warm lavenders, and stellar blues
+                const colors = ['#ff75a0', '#fca3cc', '#c39eff', '#94b3ff'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Explode out into chaos initially, then pull together like gravity
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+            }
+
+            update() {
+                // Determine cosmic layout sizing dynamically based on window size
+                const scale = Math.min(width, height) / 28;
+                const point = getHeartPoint(this.angle);
+                
+                // Add a gentle floating nebula drift effect over time
+                const driftX = Math.sin(Date.now() * 0.001 + this.angle) * 8;
+                const driftY = Math.cos(Date.now() * 0.0015 + this.angle) * 8;
+
+                const targetX = width / 2 + point.x * scale + driftX;
+                const targetY = height / 2 + point.y * scale + driftY;
+
+                // Orbit gravity style easing movement towards the target heart outline
+                this.x += (targetX - this.x) * this.speed;
+                this.y += (targetY - this.y) * this.speed;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = this.baseSize * 6;
+                ctx.shadowColor = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.baseSize, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.restore();
             }
         }
 
-        function initStars() {
-            stars = [];
-            for (let i = 0; i < starCount; i++) stars.push(new Star());
+        function initCosmos() {
+            backgroundStars = [];
+            for (let i = 0; i < 150; i++) backgroundStars.push(new BackgroundStar());
+
+            heartParticles = [];
+            // 450 distinct stellar dots mapping out the shape of the heart
+            for (let i = 0; i < 450; i++) {
+                const angle = (i / 450) * Math.PI * 2;
+                heartParticles.push(new HeartParticle(angle));
+            }
         }
 
         function animate() {
             ctx.fillStyle = nebulaGradient;
             ctx.fillRect(0, 0, width, height);
-            stars.forEach(star => {
-                star.update();
-                star.draw();
+
+            backgroundStars.forEach(s => s.draw());
+            heartParticles.forEach(p => {
+                p.update();
+                p.draw();
             });
+
             requestAnimationFrame(animate);
         }
 
