@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A Cosmic Wish | Happy Birthday! ✨</title>
-    <!-- Importing a beautiful elegant cursive font -->
+    <!-- Importing premium elegant cursive fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #000000; /* Pure pitch black */
+            background-color: #000000; /* Pure deep void black */
             color: white;
             font-family: 'Segoe UI', Roboto, sans-serif;
             display: flex;
@@ -40,11 +40,11 @@
             position: relative;
             z-index: 3;
             text-align: center;
-            transition: opacity 1s ease, transform 1s ease;
+            transition: opacity 0.5s ease;
         }
 
         .start-btn {
-            background: transparent; /* Changed to stay completely hidden in pure pitch black */
+            background: transparent;
             color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.25);
             padding: 18px 36px;
@@ -59,9 +59,9 @@
         }
 
         .start-btn:hover {
-            background: rgba(255, 40, 40, 0.1); /* Subtle crimson flash on hover */
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
-            border-color: rgba(255, 100, 100, 0.6);
+            background: rgba(213, 0, 0, 0.1); /* Subtle blood-red flash on hover */
+            box-shadow: 0 0 30px rgba(213, 0, 0, 0.4);
+            border-color: rgba(255, 23, 68, 0.6);
             transform: scale(1.02);
         }
 
@@ -70,39 +70,59 @@
             z-index: 2;
             text-align: center;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             pointer-events: none;
+        }
+
+        /* Narrative Intro Text Layer */
+        .intro-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.2rem;
+            color: #ff8a80;
+            text-shadow: 0 0 15px rgba(213, 0, 0, 0.6);
+            opacity: 0;
+            transition: opacity 1s ease;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Main Message Text Block */
+        .main-message-box {
             display: none;
             opacity: 0;
-            transition: opacity 2.5s ease;
+            transition: opacity 2s ease;
         }
 
         h1 {
-            font-family: 'Great Vibes', cursive; /* Beautiful premium cursive script */
+            font-family: 'Great Vibes', cursive;
             font-weight: 400;
-            font-size: 4rem; 
+            font-size: 4.5rem; 
             letter-spacing: 1px;
-            margin-bottom: 15px;
-            background: linear-gradient(90deg, #ffcdd2, #ffffff, #ff8a80);
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #ffb2b2, #ffffff, #ff6666);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 25px rgba(255, 50, 50, 0.4);
+            text-shadow: 0 0 25px rgba(255, 23, 68, 0.4);
         }
 
-        p {
-            font-family: 'Dancing Script', cursive; /* Soft matching cursive message */
+        p.message-body {
+            font-family: 'Dancing Script', cursive;
             font-weight: 600;
-            font-size: 1.8rem;
-            line-height: 1.4;
+            font-size: 2.2rem;
+            line-height: 1.5;
             color: #ffebee;
-            text-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+            min-height: 3.5rem; /* Prevents layout jumps while typing */
         }
     </style>
 </head>
 <body>
 
-    <!-- 🎵 Update 'moonlight-sway.mp3' if you renamed your file in the repo -->
+    <!-- 🎵 Audio Track Element -->
     <audio id="birthdayTrack" preload="auto">
         <source src="audio-1784429183439.mp3" type="audio/mpeg">
     </audio>
@@ -110,54 +130,100 @@
     <canvas id="cosmicCanvas"></canvas>
 
     <div class="interaction-gate" id="gate">
-        <button class="start-btn" onclick="revealWish()">Tap to Unveil the Wish</button>
+        <button class="start-btn" onclick="startCinematicVision()">Tap to Unveil the Wish</button>
     </div>
 
-    <div class="overlay" id="messageContainer">
-        <h1>Happy Birthday my Nia!</h1>
-        <p id="sub-message">I hope you have an amazing day!I am forever grateful for you existance in my life Saranghae uri Nia</p>
+    <div class="overlay" id="contentOverlay">
+        <div class="intro-text" id="introText"></div>
+        <div class="main-message-box" id="mainMessageBox">
+            <h1 id="mainTitle"></h1>
+            <p class="message-body" id="mainBody"></p>
+        </div>
     </div>
 
     <script>
         const audio = document.getElementById('birthdayTrack');
         const gate = document.getElementById('gate');
-        const container = document.getElementById('messageContainer');
+        const introText = document.getElementById('introText');
+        const mainMessageBox = document.getElementById('mainMessageBox');
+        const mainTitle = document.getElementById('mainTitle');
+        const mainBody = document.getElementById('mainBody');
         
-        let heartActive = false; // Controls when the heart generates
+        let heartState = "off"; // State engine flags: "off", "assemble", "hold", "retract"
 
-        function revealWish() {
-            gate.style.opacity = '0';
-            gate.style.transform = 'scale(0.9)';
-            
-            setTimeout(() => {
-                gate.style.display = 'none';
-                container.style.display = 'block';
-                
-                // Triggers text fade-in and tells animation engine to build the heart
-                setTimeout(() => { container.style.opacity = '1'; }, 50);
-                activateHeartParticleSystem(); 
-
-                // Start audio track at exactly 27 seconds
-                audio.currentTime = 27;
-                audio.volume = 0.8;
-                audio.play();
-
-                // Fades out cleanly after 16 seconds (hits exactly at 43 seconds runtime)
-                setTimeout(() => {
-                    let fadeOutInterval = setInterval(() => {
-                        if (audio.volume > 0.05) {
-                            audio.volume -= 0.05;
-                        } else {
-                            clearInterval(fadeOutInterval); // Fixed the bug here! Removed "audio." prefix
-                            audio.pause();
-                        }
-                    }, 50);
-                }, 16000); // 16000 milliseconds = 16 full seconds of playback
-
-            }, 500);
+        // Typewriter core mechanics
+        function typeWriter(element, text, speed, callback) {
+            let i = 0;
+            element.innerHTML = "";
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else if (callback) {
+                    setTimeout(callback, 600);
+                }
+            }
+            type();
         }
 
-        // --- VISUAL ENGINE ---
+        function startCinematicVision() {
+            // 1. Hide the initial user gate interaction
+            gate.style.opacity = '0';
+            setTimeout(() => { gate.style.display = 'none'; }, 400);
+
+            // Audio track plays IMMEDIATELY to capture the intro build-up
+            audio.currentTime = 24; 
+            audio.volume = 0.8;
+            audio.play();
+
+            // 2. Stage One: Render "From Leisha, to my Nia..." line
+            setTimeout(() => {
+                introText.style.opacity = '1';
+                typeWriter(introText, "From Leisha, to my Nia...", 90, () => {
+                    // Let the intro text breathe briefly, then fade out
+                    setTimeout(() => {
+                        introText.style.opacity = '0';
+                        
+                        // 3. Stage Two: Fire up particle canvas and type out birthday greetings
+                        setTimeout(() => {
+                            introText.style.display = 'none';
+                            heartState = "assemble"; // Crimson stars begin slow majestic configuration pull
+                            
+                            mainMessageBox.style.display = 'block';
+                            mainMessageBox.style.opacity = '1';
+                            
+                            // Type the Title Card header
+                            typeWriter(mainTitle, "Happy Birthday my Nia!", 70, () => {
+                                // Type the body content text
+                                typeWriter(mainBody, "Hope you have an amazing day! Forever grateful for your existence in my life Saranghae ♥", 50, () => {
+                                    heartState = "hold"; // Constellation maintains position holding structure
+                                    
+                                    // 4. Stage Three: The Retraction Cycle (Kkeut Loop)
+                                    // Let everything remain on screen for a cinematic peak, then fade to deep space blackness
+                                    setTimeout(() => {
+                                        heartState = "retract"; // Particles dissolve outwards into dark void
+                                        mainMessageBox.style.opacity = '0'; // Structural elements clear down
+                                        
+                                        // Fade audio track volume down dynamically to match visual exit
+                                        let fadeOutInterval = setInterval(() => {
+                                            if (audio.volume > 0.05) {
+                                                audio.volume -= 0.05;
+                                            } else {
+                                                clearInterval(fadeOutInterval);
+                                                audio.pause();
+                                            }
+                                        }, 60);
+                                    }, 4000); // Keeps screen active for 4 beautiful seconds at peak composition
+                                });
+                            });
+                        }, 1000);
+                    }, 1200);
+                });
+            }, 200);
+        }
+
+        // --- VISUAL PHYSICS ENGINE ---
         const canvas = document.getElementById('cosmicCanvas');
         const ctx = canvas.getContext('2d');
         let width, height, backgroundStars = [], heartParticles = [];
@@ -166,9 +232,7 @@
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
             initBackgroundStars();
-            if (heartActive) {
-                buildHeartConstellation();
-            }
+            buildHeartConstellation();
         }
 
         function getHeartPoint(t) {
@@ -182,13 +246,13 @@
             constructor() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.size = Math.random() * 1.2;
-                this.opacity = Math.random() * 0.5 + 0.1;
+                this.size = Math.random() * 1.0;
+                this.opacity = Math.random() * 0.4 + 0.1;
                 this.factor = Math.random() * 0.02 + 0.01;
             }
             draw() {
-                this.opacity += Math.sin(Date.now() * this.factor) * 0.005;
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.05, this.opacity)})`;
+                this.opacity += Math.sin(Date.now() * this.factor) * 0.003;
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.02, this.opacity)})`;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -198,43 +262,58 @@
         class HeartParticle {
             constructor(angle) {
                 this.angle = angle;
-                this.baseSize = Math.random() * 1.5 + 0.5;
+                this.baseSize = Math.random() * 1.5 + 0.6;
                 
-                // --- SLOWED MOTION DESIGN ---
-                // Lower values mean a smoother, more cinematic space pull
-                this.speed = 0.006 + Math.random() * 0.012;
+                // Slow, deliberate assembly velocity mimicry from video
+                this.speed = 0.005 + Math.random() * 0.012;
                 
-                // Deep Crimson, Ruby Red, Shimmering Dark Rose Red variants
-                const colors = ['#ff1744', '#d50000', '#ff5252', '#b71c1c', '#ff8a80'];
+                // Fine selected deep blood red, luxury ruby, and glowing dark crimson palettes
+                const colors = ['#b71c1c', '#d50000', '#ff1744', '#990000', '#ff5252'];
                 this.color = colors[Math.floor(Math.random() * colors.length)];
                 
-                // Explode particles far out past the display boundaries initially
+                // Explode starting locations deep outside visual scopes
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
+                
+                // Exit trajectory calculations for the final fracture sequence
+                this.vx = (Math.random() - 0.5) * 15;
+                this.vy = (Math.random() - 0.5) * 15;
+                this.alpha = 1.0;
             }
 
             update() {
-                const scale = Math.min(width, height) / 28;
-                const point = getHeartPoint(this.angle);
-                
-                // Slow wavy nebula drift
-                const driftX = Math.sin(Date.now() * 0.0008 + this.angle) * 7;
-                const driftY = Math.cos(Date.now() * 0.0012 + this.angle) * 7;
+                if (heartState === "assemble" || heartState === "hold") {
+                    const scale = Math.min(width, height) / 28;
+                    const point = getHeartPoint(this.angle);
+                    
+                    // Gentle nebula wind sway variables
+                    const driftX = Math.sin(Date.now() * 0.0008 + this.angle) * 8;
+                    const driftY = Math.cos(Date.now() * 0.0012 + this.angle) * 8;
 
-                const targetX = width / 2 + point.x * scale + driftX;
-                const targetY = height / 2 + point.y * scale + driftY;
+                    const targetX = width / 2 + point.x * scale + driftX;
+                    const targetY = height / 2 + point.y * scale + driftY;
 
-                // Pull into position smoothly
-                this.x += (targetX - this.x) * this.speed;
-                this.y += (targetY - this.y) * this.speed;
+                    // Pull toward targeted vectors smoothly
+                    this.x += (targetX - this.x) * this.speed;
+                    this.y += (targetY - this.y) * this.speed;
+                } 
+                else if (heartState === "retract") {
+                    // Explode the structural paths outwards and vanish (Kkeut action loop)
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.alpha -= 0.012; 
+                    if (this.alpha < 0) this.alpha = 0;
+                }
             }
 
             draw() {
+                if (this.alpha <= 0) return;
                 ctx.save();
+                ctx.globalAlpha = this.alpha;
                 ctx.fillStyle = this.color;
                 
-                // Intense Crimson Glow
-                ctx.shadowBlur = this.baseSize * 9;
+                // Highly concentrated crimson lighting glow map
+                ctx.shadowBlur = this.baseSize * 10;
                 ctx.shadowColor = this.color;
                 
                 ctx.beginPath();
@@ -246,30 +325,28 @@
 
         function initBackgroundStars() {
             backgroundStars = [];
-            for (let i = 0; i < 120; i++) backgroundStars.push(new BackgroundStar());
+            for (let i = 0; i < 100; i++) backgroundStars.push(new BackgroundStar());
         }
 
         function buildHeartConstellation() {
             heartParticles = [];
-            for (let i = 0; i < 500; i++) {
-                const angle = (i / 500) * Math.PI * 2;
+            for (let i = 0; i < 550; i++) {
+                const angle = (i / 550) * Math.PI * 2;
                 heartParticles.push(new HeartParticle(angle));
             }
         }
 
-        function activateHeartParticleSystem() {
-            heartActive = true;
-            buildHeartConstellation();
-        }
-
         function animate() {
-            // Pure canvas pitch black fill on every redraw frame
+            // Fill background space with absolute pitch black
             ctx.fillStyle = '#000000';
             ctx.fillRect(0, 0, width, height);
 
-            backgroundStars.forEach(s => s.draw());
+            // Maintain spatial starry backdrop until clean break scene
+            if (heartState !== "retract" || (heartParticles.length > 0 && heartParticles[0].alpha > 0)) {
+                backgroundStars.forEach(s => s.draw());
+            }
             
-            if (heartActive) {
+            if (heartState !== "off") {
                 heartParticles.forEach(p => {
                     p.update();
                     p.draw();
