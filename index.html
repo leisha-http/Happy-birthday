@@ -68,13 +68,13 @@
         }
 
         .overlay {
-            position: relative;
+            position: absolute; /* Changed to absolute to prevent pushing the canvas layout boundaries */
             z-index: 2;
             text-align: center;
             width: 85%;
-            max-width: 450px;
+            max-width: 420px;
             pointer-events: none;
-            margin-top: 20px; /* Aligns text perfectly inside the large open heart pocket */
+            transform: translateY(15px); /* Perfectly aligns text within the newly contained heart cavity */
         }
 
         /* Narrative Intro Text Layer */
@@ -126,7 +126,7 @@
 
     <!-- 🎵 Audio Track Element -->
     <audio id="birthdayTrack" preload="auto">
-        <source src="audio-1784429183439.mp3" type="audio/mpeg">
+        <source src="moonlight-sway.mp3" type="audio/mpeg">
     </audio>
 
     <canvas id="cosmicCanvas"></canvas>
@@ -202,7 +202,6 @@
                                     heartState = "hold"; // Constellation maintains position holding structure
                                     
                                     // 4. Stage Three: The Retraction Cycle (Kkeut Loop)
-                                    // Let everything remain on screen for a beautiful peak, then dissolve
                                     setTimeout(() => {
                                         heartState = "retract"; // Particles dissolve outwards into dark void
                                         mainMessageBox.style.opacity = '0'; // Structural elements clear down
@@ -265,23 +264,21 @@
             constructor(angle) {
                 this.angle = angle;
                 
-                // Controlled radial offset to make the heart boundary "fuller" and thick like a ribbon without losing shape
-                this.radiusOffset = Math.random() * 24 - 12; 
+                // Controlled radial offset thickness band mirroring the inspiration image perfectly
+                this.radiusOffset = Math.random() * 20 - 10; 
                 
-                this.baseSize = Math.random() * 1.6 + 0.8; // Glittering point sizing
+                this.baseSize = Math.random() * 1.5 + 0.7; // Shimmering dot sizes
                 
-                // Slow, elegant assembly velocity
+                // Smooth assembly speeds
                 this.speed = 0.007 + Math.random() * 0.013;
                 
                 // Pinkish glowing crimson/ruby palette inspired directly by the screenshot inspiration image
                 const colors = ['#ff2a6d', '#ff1744', '#d50000', '#ff5252', '#ff8a80'];
                 this.color = colors[Math.floor(Math.random() * colors.length)];
                 
-                // Explode starting locations deep outside visual scopes
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
                 
-                // Exit trajectory calculations for the final fracture sequence
                 this.vx = (Math.random() - 0.5) * 14;
                 this.vy = (Math.random() - 0.5) * 14;
                 this.alpha = 1.0;
@@ -289,19 +286,18 @@
 
             update() {
                 if (heartState === "assemble" || heartState === "hold") {
-                    // Perfect stable scale sizing: ensures layout works perfectly across all smartphones
-                    const scale = Math.min(width, height) / 11; 
+                    // SAFE VIEWPORT SCALE BOUNDARY: Caps sizing to fit within the screen height limits perfectly 
+                    const scale = Math.min(width / 28, height / 36); 
                     const point = getHeartPoint(this.angle);
                     
-                    // Gentle nebula wind sway variables
-                    const driftX = Math.sin(Date.now() * 0.0008 + this.angle) * 8;
-                    const driftY = Math.cos(Date.now() * 0.0012 + this.angle) * 8;
+                    // Gentle ambient drifting animation 
+                    const driftX = Math.sin(Date.now() * 0.0008 + this.angle) * 6;
+                    const driftY = Math.cos(Date.now() * 0.0012 + this.angle) * 6;
 
-                    // Compute absolute position vector using perfect geometry math
+                    // Compute absolute point destination vector centered inside the layout
                     const targetX = width / 2 + point.x * scale + (Math.sin(this.angle) * this.radiusOffset) + driftX;
-                    const targetY = height / 2 + point.y * scale + (Math.cos(this.angle) * this.radiusOffset) + driftY - (height * 0.02);
+                    const targetY = height / 2 + point.y * scale + (Math.cos(this.angle) * this.radiusOffset) + driftY;
 
-                    // Pull toward targeted vectors smoothly
                     this.x += (targetX - this.x) * this.speed;
                     this.y += (targetY - this.y) * this.speed;
                 } 
@@ -319,7 +315,6 @@
                 ctx.globalAlpha = this.alpha;
                 ctx.fillStyle = this.color;
                 
-                // High concentration glow layers
                 ctx.shadowBlur = this.baseSize * 10;
                 ctx.shadowColor = this.color;
                 
@@ -337,7 +332,7 @@
 
         function buildHeartConstellation() {
             heartParticles = [];
-            // Upped count to 800 for the perfect thick, rich density of glowing dots
+            // High particle concentration for a clean velvet look
             for (let i = 0; i < 800; i++) {
                 const angle = (i / 800) * Math.PI * 2;
                 heartParticles.push(new HeartParticle(angle));
